@@ -17,9 +17,9 @@ public class AuthenticationTest {
     }
 
     @Test
-    public void testIncorrectLogin() {
-        boolean loginUser = authenticationService.login("abc", "123");
-        assertFalse(loginUser);
+    public void testCorrectLogin() {
+        boolean loginUser = authenticationService.login("joao", "abc");
+        assertTrue(loginUser);
     }
 
     @Test
@@ -29,13 +29,18 @@ public class AuthenticationTest {
     }
 
     @Test
-    public void testEmptyPassword() {
-        assertThrows(IllegalArgumentException.class, () -> authenticationService.login("joao", ""));
+    public void testIncorrectLogin() {
+        boolean loginUser = authenticationService.login("abc", "123");
+        assertFalse(loginUser);
     }
 
     @Test
-    public void testCorrectLogin() {
-        boolean loginUser = authenticationService.login("joao", "abc");
-        assertTrue(loginUser);
+    public void testNullPassword() {
+        assertThrows(IllegalArgumentException.class, () -> authenticationService.login("joao", null));
+    }
+
+    @Test
+    public void testEmptyPassword() {
+        assertThrows(IllegalArgumentException.class, () -> authenticationService.login("joao", ""));
     }
 }
