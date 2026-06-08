@@ -2,6 +2,8 @@ import library.repository.UserRepository;
 import library.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,5 +44,15 @@ public class AuthenticationTest {
     @Test
     public void testEmptyPassword() {
         assertThrows(IllegalArgumentException.class, () -> authenticationService.login("joao", ""));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "joao, abc, true",
+            "joao, 123, false"
+    })
+    public void testMultipleLogins(String login, String password, boolean esperado) {
+        assertEquals(esperado, authenticationService.login(login, password));
+
     }
 }
