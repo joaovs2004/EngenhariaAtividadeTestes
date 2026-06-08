@@ -5,6 +5,8 @@ import library.service.LibraryService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,30 +63,33 @@ public class LibraryTest {
         assertFalse(libraryService.borrowBook(user, "O Hobbit"));
     }
 
-    @Test
+    @ParameterizedTest
+    @EmptySource
     @DisplayName("Teste de titulo do livro vazio")
-    public void testEmptyTitle() {
+    public void testEmptyTitle(String title) {
         User user = userRepository.findByUsername("admin");
-        assertThrows(IllegalArgumentException.class, () -> libraryService.borrowBook(user, ""));
-    }
-
-    @Test
-    @DisplayName("Teste de titulo do livro nulo")
-    public void testNullTitle() {
-        User user = userRepository.findByUsername("admin");
-        assertThrows(IllegalArgumentException.class, () -> libraryService.borrowBook(user, null));
+        assertThrows(IllegalArgumentException.class, () -> libraryService.borrowBook(user, title));
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "Senhor dos aneis, true",
-            "As Crônicas de Gelo e Fogo, true",
-            "Java Avançado, false",
-    })
-    @DisplayName("Teste com multiplos titulos")
-    public void testMultipleLogins(String titulo, boolean esperado) {
+    @NullSource
+    @DisplayName("Teste de titulo do livro nulo")
+    public void testNullTitle(String title) {
         User user = userRepository.findByUsername("admin");
-        assertEquals(esperado, libraryService.borrowBook(user, titulo));
+        assertThrows(IllegalArgumentException.class, () -> libraryService.borrowBook(user, title));
+    }
 
+    @ParameterizedTest
+//    @CsvSource({
+//            "Senhor dos aneis, true",
+//            "As Crônicas de Gelo e Fogo, true",
+//            "Java Avançado, false",
+//    })
+    //@ValueSource(doubles = {100.0, 200.0, 500.0})
+    @ValueSource(strings = {"Senhor dos aneis", "As Crônicas de Gelo e Fogo"})
+    @DisplayName("Teste com multiplos titulos")
+    public void testMultipleLogins(String titulo) {
+        User user = userRepository.findByUsername("admin");
+        assertTrue(libraryService.borrowBook(user, titulo));
     }
 }
